@@ -108,8 +108,8 @@ def fetch_tweets(
 
 
 if __name__ == "__main__":
-    search_space = sys.argv[1]
-    tweets_per_query = sys.argv[2]
+    search_space = list(sys.argv[1])
+    tweets_per_query = int(sys.argv[2])
     api = auth_tweepy()
     df = fetch_tweets(search_space, tweets_per_query, api)
     df.to_csv("data.csv", index=False)

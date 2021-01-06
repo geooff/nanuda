@@ -1,0 +1,5 @@
+# Ignore virtual env
+.venv
+
+# Ignore data folders
+/run_*

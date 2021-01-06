@@ -4,6 +4,7 @@ import pandas as pd
 import emoji
 from math import ceil
 import os
+import sys
 from datetime import datetime
 
 
@@ -26,8 +27,8 @@ def auth_tweepy(path="twitter_keys.json"):
 
 def fetch_tweets(
     queries,
+    tweets_per_query,
     api,
-    tweets_per_query=200,
     keys_to_keep=["created_at", "id", "full_text", "lang"],
     DRYRUN=False,
 ):
@@ -107,7 +108,8 @@ def fetch_tweets(
 
 
 if __name__ == "__main__":
-    search_space = list("😀😍🤪🤨😢😷🤑🤠👻👾")
+    search_space = sys.argv[1]
+    tweets_per_query = sys.argv[2]
     api = auth_tweepy()
-    df = fetch_tweets(search_space, api)
+    df = fetch_tweets(search_space, tweets_per_query, api)
     df.to_csv("data.csv", index=False)

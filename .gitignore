@@ -3,3 +3,6 @@
 
 # Ignore data folders
 /run_*
+
+# Ignore api creds
+twitter_keys.json

@@ -99,8 +99,10 @@ def fetch_tweets(
                 df.to_csv(data_dir + "/" + str(datetime.now()) + ".csv", index=False)
                 data = []
 
-        df = pd.DataFrame(data)
-        df.to_csv(data_dir + "/" + str(datetime.now()) + ".csv", index=False)
+        if data:  # Clean up the rest of the data
+            df = pd.DataFrame(data)
+            df.to_csv(data_dir + "/" + str(datetime.now()) + ".csv", index=False)
+
         filepaths = [
             data_dir + "/" + f for f in os.listdir(data_dir) if f.endswith(".csv")
         ]

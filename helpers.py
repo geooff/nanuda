@@ -32,9 +32,6 @@ def fetch_tweets(
     keys_to_keep=["created_at", "id", "full_text", "lang"],
     DRYRUN=False,
 ):
-
-    tweets = []
-
     def find_emoji(text):
         # This assumes all of search space is emojis only!
         found_emojis = [c for c in text if c in queries]
@@ -58,6 +55,7 @@ def fetch_tweets(
 
         for search_emoji in queries:
             last_id = -1
+            tweets = []
             query = search_emoji + " -filter:retweets"
             print(f'Starting query "{query}"')
             while len(tweets) < tweets_per_query:

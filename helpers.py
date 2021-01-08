@@ -109,6 +109,9 @@ def fetch_tweets(
 
 if __name__ == "__main__":
     search_space = list(sys.argv[1])
+    if "".join(search_space) == "ALL":
+        search_space = [*emoji.UNICODE_EMOJI]
+
     tweets_per_query = int(sys.argv[2])
     api = auth_tweepy()
     df = fetch_tweets(search_space, tweets_per_query, api)

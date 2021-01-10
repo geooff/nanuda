@@ -80,16 +80,7 @@ def fetch_tweets(
 
             for tweet in tweets:
                 filtered_tweet = {key: tweet._json[key] for key in keys_to_keep}
-                filtered_tweet["labels"], total_emojis = find_emoji(
-                    filtered_tweet["full_text"]
-                )
-
-                # Omit data with excessive emoji useage
-                if total_emojis < 5:
-                    filtered_tweet["full_text"] = remove_emoji(
-                        filtered_tweet["full_text"]
-                    )
-                    data.append(filtered_tweet)
+                data.append(filtered_tweet)
 
             if len(data) > 10000:
                 print("Persisting current search results to disk")

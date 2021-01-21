@@ -32,15 +32,6 @@ def fetch_tweets(
     keys_to_keep=["created_at", "id", "full_text", "lang"],
     DRYRUN=False,
 ):
-    def find_emoji(text):
-        # This assumes all of search space is emojis only!
-        found_emojis = [c for c in text if c in queries]
-        unique_emojis = set(found_emojis)
-        return ",".join(unique_emojis), len(found_emojis)  # emoji.UNICODE_EMOJI)
-
-    def remove_emoji(text):
-        return "".join(c for c in text if c not in emoji.UNICODE_EMOJI)
-
     print(f"This will run {str(len(queries))} queries")
     print(
         f"This search may take up to {ceil(len(queries)*tweets_per_query/100/180)*15} minutes"
@@ -92,11 +83,6 @@ def fetch_tweets(
             df = pd.DataFrame(data)
             df.to_csv(data_dir + "/" + str(datetime.now()) + ".csv", index=False)
 
-        filepaths = [
-            data_dir + "/" + f for f in os.listdir(data_dir) if f.endswith(".csv")
-        ]
-        return pd.concat(map(pd.read_csv, filepaths))
-
 
 if __name__ == "__main__":
     search_space = list(sys.argv[1])
@@ -106,4 +92,3 @@ if __name__ == "__main__":
     tweets_per_query = int(sys.argv[2])
     api = auth_tweepy()
     df = fetch_tweets(search_space, tweets_per_query, api)
-    df.to_csv("data.csv", index=False)

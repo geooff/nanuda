@@ -1,7 +1,9 @@
 # Ignore virtual env
 .venv
 
-# Ignore data folders
+# Ignore data
+*.tgz
+*.csv
 /run_*
 
 # Ignore api creds

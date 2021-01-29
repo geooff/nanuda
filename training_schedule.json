@@ -1,0 +1,24 @@
+[
+    {
+        "depth": -1,
+        "epochs": 2,
+        "start_lr": 5e-2
+    },
+    {
+        "depth": -2,
+        "epochs": 2,
+        "start_lr": 2.2e-4,
+        "end_lr": 2e-2
+    },
+    {
+        "depth": -3,
+        "epochs": 2,
+        "start_lr": 1.1e-4,
+        "end_lr": 5e-3
+    },
+    {
+        "epochs": 2,
+        "start_lr": 2.2e-5,
+        "end_lr": 5e-3
+    }
+]

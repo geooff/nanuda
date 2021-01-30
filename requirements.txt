@@ -3,3 +3,4 @@ torchvision
 fastai
 voila
 ipywidgets
+prettytable

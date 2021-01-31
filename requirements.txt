@@ -1,5 +1,5 @@
 https://download.pytorch.org/whl/cpu/torch-1.7.1%2Bcpu-cp38-cp38-linux_x86_64.whl
-fastai
-voila
-ipywidgets
+fastai==2.2.5
+voila==0.2.6
+ipywidgets==7.6.3
 prettytable

@@ -6,6 +6,7 @@ from fastai.learner import load_learner
 from prettytable import PrettyTable
 from typing import Optional
 from pathlib import Path
+import os
 
 from webapp.model_fetcher import download_file_from_google_drive
 
@@ -19,10 +20,13 @@ async def root():
 
 
 # Warm up
-FILE_ID = "1tzQB9IzrlRdpS5nbHJ3OLkvALgYAXrVw"
 MODEL_PATH = "model.pkl"
 if not Path(MODEL_PATH).is_file():
-    download_file_from_google_drive(FILE_ID, MODEL_PATH)
+    MODEL_STORAGE_ID = os.environ.get("MODEL_STORAGE_ID")
+    if MODEL_STORAGE_ID:
+        download_file_from_google_drive(MODEL_STORAGE_ID, MODEL_PATH)
+    else:
+        raise KeyError("Error - MODEL_STORAGE_ID not set. Check Heroku config")
 
 # Load Learner from model
 learn = load_learner(MODEL_PATH)

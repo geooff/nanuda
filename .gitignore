@@ -1,10 +1,16 @@
 # Ignore virtual env
 .venv
+__pycache__
 
 # Ignore data
 *.tgz
 *.csv
 /run_*
+
+# Ignore models
+*.pkl
+
+# Ignore jupyter shit
 
 # Ignore api creds
 twitter_keys.json

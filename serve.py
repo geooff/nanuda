@@ -32,7 +32,7 @@ async def root():
 
 
 @app.post("/")
-async def classify_text(text: Text, max_n=5):
+def classify_text(text: Text, max_n=5):
     output_grid = PrettyTable(format=True)
     output_grid.field_names = ["Emoji", "Confidence"]
     # Get List of predictions from fastai

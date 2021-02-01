@@ -9,6 +9,9 @@ from pathlib import Path
 
 from model_fetcher import download_file_from_google_drive
 
+# Bind webserver early to avoid timeout issue
+app = FastAPI()
+
 # Warm up
 FILE_ID = "1tzQB9IzrlRdpS5nbHJ3OLkvALgYAXrVw"
 MODEL_PATH = "model.pkl"
@@ -18,8 +21,6 @@ if not Path(MODEL_PATH).is_file():
 # Load Learner from model
 learn = load_learner(MODEL_PATH)
 labels = learn.dls.vocab[1]
-
-app = FastAPI()
 
 
 class Text(BaseModel):

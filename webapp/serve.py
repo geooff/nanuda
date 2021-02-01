@@ -7,10 +7,16 @@ from prettytable import PrettyTable
 from typing import Optional
 from pathlib import Path
 
-from model_fetcher import download_file_from_google_drive
+from webapp.model_fetcher import download_file_from_google_drive
 
 # Bind webserver early to avoid timeout issue
 app = FastAPI()
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
 
 # Warm up
 FILE_ID = "1tzQB9IzrlRdpS5nbHJ3OLkvALgYAXrVw"
@@ -25,11 +31,6 @@ labels = learn.dls.vocab[1]
 
 class Text(BaseModel):
     body: str
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
 
 
 @app.post("/")

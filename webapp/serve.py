@@ -24,11 +24,13 @@ MODEL_PATH = "model.pkl"
 if not Path(MODEL_PATH).is_file():
     MODEL_STORAGE_ID = os.environ.get("MODEL_STORAGE_ID")
     if MODEL_STORAGE_ID:
+        print(f"Fetching model of ID: {MODEL_STORAGE_ID}")
         download_file_from_google_drive(MODEL_STORAGE_ID, MODEL_PATH)
     else:
         raise KeyError("Error - MODEL_STORAGE_ID not set. Check Heroku config")
 
 # Load Learner from model
+print(f"Loading model {MODEL_PATH}")
 learn = load_learner(MODEL_PATH)
 labels = learn.dls.vocab[1]
 
@@ -37,7 +39,7 @@ class Text(BaseModel):
     body: str
 
 
-@app.post("/")
+@app.post("/predict")
 def classify_text(text: Text, max_n=5):
     output_grid = PrettyTable(format=True)
     output_grid.field_names = ["Emoji", "Confidence"]

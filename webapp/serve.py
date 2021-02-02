@@ -31,7 +31,7 @@ def classify_text(text: Text, max_n=5):
     output_grid.field_names = ["Emoji", "Confidence"]
     # Get List of predictions from fastai
     results = model.classify_emoji(text.body)
-    top_results = results[:max_n]
+    top_results = results[: int(max_n)]
     # TODO: Use this to display confidence in pred
     total_confidence = sum([x[1] for x in top_results])
     for row in top_results:

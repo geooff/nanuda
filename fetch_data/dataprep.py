@@ -23,7 +23,7 @@ def prep_data(path, sample_pct, min_occurances, undersample):
         return list(set(re.findall(emoji_regex, s)))
 
     def exclude_emoji(s):
-        return "".join([c for c in s if c not in emoji.UNICODE_EMOJI])
+        return re.sub(emoji_regex, "", s)
 
     def render_data(path):
         data_dir = os.path.join(os.getcwd(), "data_" + str(datetime.now()))

@@ -1,6 +1,7 @@
 # Ignore virtual env
 .venv
 __pycache__
+.DS_Store
 
 # Ignore data
 *.tgz
@@ -9,8 +10,6 @@ __pycache__
 
 # Ignore models
 *.pkl
-
-# Ignore jupyter shit
 
 # Ignore api creds
 twitter_keys.json

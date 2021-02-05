@@ -1,9 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from typing import Optional
-from prettytable import PrettyTable
-
 from webapp.emoji_classifier import EmojiClassifier
 
 # Bind webserver early to avoid timeout issue

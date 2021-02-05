@@ -1,7 +1,6 @@
 # Ignore virtual env
 .venv
 __pycache__
-.DS_Store
 
 # Ignore data
 *.tgz
@@ -13,3 +12,7 @@ __pycache__
 
 # Ignore api creds
 twitter_keys.json
+
+# Ignore other stuff
+.DS_Store
+.vscode

@@ -22,5 +22,4 @@ class EmojiClassifier:
     def classify_emoji(self, text: str):
         confidences = self.learn.predict(text)[2].tolist()
         # Wrap labels and confidences into dictionary
-        results = {l: c for l, c in zip(self.labels, confidences)}
-        return sorted(results.items(), key=lambda x: x[1], reverse=True)
+        return [{"emoji": l, "confidence": c} for l, c in zip(self.labels, confidences)]

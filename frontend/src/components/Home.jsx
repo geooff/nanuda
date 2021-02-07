@@ -5,10 +5,10 @@ class Home extends Component {
     constructor(props) {
         super(props)
     
-        this.state = {
-					body: '',
-					results: []
-				}
+      this.state = {
+			body: '',
+			results: []
+		}
 		}
 	
     handleChange =(event) => {
@@ -20,9 +20,7 @@ class Home extends Component {
 			
 			axios.post('/?max_n=5', this.state)
 			.then(response => {
-				console.log(response.data)
 				this.setState( { results: response.data})
-				console.log(this.state.results)
 			})
 			.catch(error => {
 				console.log(error)
@@ -30,13 +28,13 @@ class Home extends Component {
 		}
     
     render() {
-        const {body, results} = this.state
+        const { body, results } = this.state
             return (
                 <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
                     <form onSubmit={this.handleSubmit}>
                       <div>
-												<input 
-												type="text" 
+                        <input 
+                          type="text" 
                           name="body" 
                           value={body} 
                           onChange={this.handleChange}/>

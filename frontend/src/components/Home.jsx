@@ -34,7 +34,7 @@ class Home extends Component {
     event.preventDefault();
 
     axios
-      .post("/?max_n=5", this.state)
+      .post("localhost:8000/?max_n=5", this.state)
       .then((response) => {
         let responseArray = response.data;
         var responseObj = responseArray.map(function (x) {

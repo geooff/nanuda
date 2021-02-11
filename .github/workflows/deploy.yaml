@@ -1,4 +1,4 @@
-name: Deploy to dokku
+name: Deploy to dokku 🚀
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy 🛰
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master

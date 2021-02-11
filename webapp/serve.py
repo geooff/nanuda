@@ -23,10 +23,14 @@ async def root():
 async def classify_text(text: Text, max_n=5):
     # Get List of predictions from fastai
     results = model.classify_emoji(text.body)
-    top_results = results[: int(max_n)]
-    return sorted(top_results, key=lambda x: x["confidence"], reverse=True)
+    sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
+    return sorted_results[: int(max_n)]
 
 
 @app.get("/healthcheck", status_code=200)
 async def healthcheck():
-    return "Emoji classifier is all ready to go!"
+    if hasattr(model, 'MODEL_S3_PATH'):
+        model_path = model.MODEL_S3_PATH 
+    else:
+        model_path = model.MODEL_PATH
+    return f"Emoji classifier from path {model_path} is ready to go!"

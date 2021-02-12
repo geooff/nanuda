@@ -1,1 +1,1 @@
-web: uvicorn webapp.serve:app --workers 1 --port=$PORT
+web: uvicorn webapp.serve:app --workers=$WORKERS --port=$PORT

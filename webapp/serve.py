@@ -12,6 +12,7 @@ model = EmojiClassifier()
 
 class Text(BaseModel):
     body: str
+    emoji_returned: int
 
 
 @app.get("/")
@@ -20,19 +21,20 @@ async def root():
 
 
 @app.post("/classify_text")
-async def classify_text(text: Text, max_n=5):
+async def classify_text(text: Text):
     # Get List of predictions from fastai
     results = model.classify_emoji(text.body)
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
-    return sorted_results[: int(max_n)]
+    return sorted_results[:5]
+
 
 @app.post("/emojify")
-async def emojify_text(text: Text,  emoji_returned: int):
+async def emojify_text(text: Text):
     # Get List of predictions from fastai
     results = model.classify_emoji(text.body)
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
-    emoji = [x["emoji"] for x in sorted_results[: int(emoji_returned)]]
-    return " ".join([text.body, *emoji])
+    emoji = "".join([x["emoji"] for x in sorted_results[: int(text.emoji_returned)]])
+    return " ".join([text.body, emoji])
 
 
 @app.get("/healthcheck", status_code=200)

@@ -34,9 +34,11 @@ class Home extends Component {
     event.preventDefault();
 
     axios
-      .post("localhost:8000/?max_n=5", this.state)
+      .post("/", this.state)
       .then((response) => {
+
         let responseArray = response.data;
+        console.log(responseArray)
         var responseObj = responseArray.map(function (x) {
           return {
             emoji: x[0],

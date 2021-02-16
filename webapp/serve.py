@@ -10,6 +10,9 @@ app = FastAPI()
 model = EmojiClassifier()
 
 
+class Classify(BaseModel):
+    body: str
+
 class Text(BaseModel):
     body: str
     emoji_returned: int
@@ -21,7 +24,7 @@ async def root():
 
 
 @app.post("/classify_text")
-async def classify_text(text: Text):
+async def classify_text(text: Classify):
     # Get List of predictions from fastai
     results = model.classify_emoji(text.body)
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)

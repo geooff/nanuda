@@ -10,8 +10,9 @@ __pycache__
 # Ignore models
 *.pkl
 
-# Ignore api creds
+# Ignore creds
 twitter_keys.json
+S3_keys.json
 
 # Ignore other stuff
 .DS_Store

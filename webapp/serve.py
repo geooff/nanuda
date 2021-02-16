@@ -26,8 +26,12 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+class Classify(BaseModel):
+    body: str
+
 class Text(BaseModel):
     body: str
+    emoji_returned: int
 
 
 @app.get("/")
@@ -35,14 +39,27 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.post("/")
-async def classify_text(text: Text, max_n=5):
+@app.post("/classify_text")
+async def classify_text(text: Classify):
     # Get List of predictions from fastai
     results = model.classify_emoji(text.body)
-    top_results = results[: int(max_n)]
-    return sorted(top_results, key=lambda x: x["confidence"], reverse=True)
+    sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
+    return sorted_results[:5]
+
+
+@app.post("/emojify")
+async def emojify_text(text: Text):
+    # Get List of predictions from fastai
+    results = model.classify_emoji(text.body)
+    sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
+    emoji = "".join([x["emoji"] for x in sorted_results[: int(text.emoji_returned)]])
+    return " ".join([text.body, emoji])
 
 
 @app.get("/healthcheck", status_code=200)
 async def healthcheck():
-    return "Emoji classifier is all ready to go!"
+    if hasattr(model, 'MODEL_S3_PATH'):
+        model_path = model.MODEL_S3_PATH 
+    else:
+        model_path = model.MODEL_PATH
+    return f"Emoji classifier from path {model_path} is ready to go!"

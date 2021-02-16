@@ -10,8 +10,8 @@ Nanuda predicts emoji to match your text using [NLP](https://en.wikipedia.org/wi
 
 ```bash
 python3 -m venv .env
-pip install -r requirements.txt
 source .env/bin/activate
+pip install -r requirements-dev.txt
 ```
 
 ## Usage

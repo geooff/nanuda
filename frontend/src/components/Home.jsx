@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
 import {
-  IconButton,
   Input,
   TableContainer,
   Paper,
@@ -13,16 +12,21 @@ import {
   Button,
 } from "@material-ui/core";
 
+
 /** Given an user input, display related emojis and their confidence level */
 class Home extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      body: "",
+      "body": "",
       results: [],
     };
   }
+
+   instance = axios.create({
+    baseURL: 'http://api.nanuda.ca'
+  })
 
   /** Called on input change */
   handleChange = (event) => {
@@ -31,24 +35,21 @@ class Home extends Component {
 
   /** Called on submit click */
   handleSubmit = (event) => {
+    if (!this.state.body){
+      alert('Need text')
+      return;
+    }
     event.preventDefault();
 
-    axios
-      .post("/", this.state)
+    this.instance
+      .post('/classify_text',{
+        'body': this.state.body
+      })
       .then((response) => {
-
-        let responseArray = response.data;
-        console.log(responseArray)
-        var responseObj = responseArray.map(function (x) {
-          return {
-            emoji: x[0],
-            confidence: x[1],
-          };
-        });
-        this.setState({ results: responseObj });
+        this.setState({ results: response.data });
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.response.data);
       });
   };
 
@@ -98,7 +99,7 @@ class Home extends Component {
                             {result.emoji}
                           </TableCell>
                           <TableCell align="right">
-                            {result.confidence}
+                            {(result.confidence*100).toFixed(2)}
                           </TableCell>
                         </TableRow>
                       </TableBody>

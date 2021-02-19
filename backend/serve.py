@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 
-from webapp.emoji_classifier import EmojiClassifier
+from emoji_classifier import EmojiClassifier
 
 # Bind webserver early to avoid timeout issue
 app = FastAPI()

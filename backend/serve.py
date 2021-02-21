@@ -14,7 +14,8 @@ model = EmojiClassifier()
 origins = [
     "http://localhost:3000",
     "localhost:3000",
-    os.environ.get("FE_URL")
+    "app.nanuda.ca",
+    "http://app.nanuda.ca"
 ]
 
 
@@ -26,9 +27,11 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+# DataClass for classifying text without control of return
 class Classify(BaseModel):
     body: str
 
+# DataClass for classifying text WITH control of return
 class Text(BaseModel):
     body: str
     emoji_returned: int
@@ -59,7 +62,9 @@ async def emojify_text(text: Text):
 @app.get("/healthcheck", status_code=200)
 async def healthcheck():
     if hasattr(model, 'MODEL_S3_PATH'):
+        # Model is served via S3 Path
         model_path = model.MODEL_S3_PATH 
     else:
+        # Model comes from local
         model_path = model.MODEL_PATH
     return f"Emoji classifier from path {model_path} is ready to go!"

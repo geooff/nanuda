@@ -67,7 +67,8 @@ class Home extends Component {
             "linear-gradient(-45deg, #a1adc9, #637fc2, #1e46a6, #6e7085)",
         }}
       >
-        <h1>NANUDA 👾</h1>
+       
+        <h1>!!!NANUDA 🥶</h1>
         <br></br>
         <div>
           <form onSubmit={this.handleSubmit}>
@@ -79,7 +80,7 @@ class Home extends Component {
                 onChange={this.handleChange}
               />
               <Button type="submit" variant="outlined">
-                Classify
+                Classify 
               </Button>
             </div>
 

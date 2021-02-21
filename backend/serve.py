@@ -14,6 +14,7 @@ model = EmojiClassifier()
 origins = [
     "http://localhost:3000",
     "localhost:3000",
+    "app.nanuda.ca",
     os.environ.get("FE_URL")
 ]
 

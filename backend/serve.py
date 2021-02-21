@@ -14,7 +14,8 @@ model = EmojiClassifier()
 origins = [
     "http://localhost:3000",
     "localhost:3000",
-    "app.nanuda.ca"
+    "app.nanuda.ca",
+    "http://app.nanuda.ca"
 ]
 
 

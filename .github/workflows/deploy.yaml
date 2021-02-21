@@ -9,8 +9,8 @@ jobs:
   check:
     name: Check for change 👛
     outputs:
-      deploy_be: ${{ steps.check.outputs.deploy_be }}
-      deploy_fe: ${{ steps.check.outputs.deploy_fe }}
+      deploy_be: ${{ steps.check_files.outputs.deploy_be }}
+      deploy_fe: ${{ steps.check_files.outputs.deploy_fe }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code 💻

@@ -26,9 +26,11 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+# DataClass for classifying text without control of return
 class Classify(BaseModel):
     body: str
 
+# DataClass for classifying text WITH control of return
 class Text(BaseModel):
     body: str
     emoji_returned: int

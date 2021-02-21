@@ -35,11 +35,9 @@ jobs:
             if [[ $file == backend/* ]]; then
               echo "This modified file is in the 'backend' folder."
               echo "::set-output name=deploy_be::true"
-              break
             elif [[ $file == frontend/* ]]; then
               echo "This modified file is in the 'frontend' folder."
               echo "::set-output name=deploy_fe::true"
-              break
             else
               echo "File not in deplyable both - Skipping"
             fi

@@ -59,7 +59,9 @@ async def emojify_text(text: Text):
 @app.get("/healthcheck", status_code=200)
 async def healthcheck():
     if hasattr(model, 'MODEL_S3_PATH'):
+        # Model is served via S3 Path
         model_path = model.MODEL_S3_PATH 
     else:
+        # Model comes from local
         model_path = model.MODEL_PATH
     return f"Emoji classifier from path {model_path} is ready to go!"

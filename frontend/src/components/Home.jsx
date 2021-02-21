@@ -31,6 +31,7 @@ class Home extends Component {
   /** Called on input change */
   handleChange = (event) => {
     this.setState({ body: event.target.value });
+    
   };
 
   /** Called on submit click */
@@ -66,7 +67,7 @@ class Home extends Component {
             "linear-gradient(-45deg, #a1adc9, #637fc2, #1e46a6, #6e7085)",
         }}
       >
-        <h1>NANUDA TITLE</h1>
+        <h1>NANUDA 👾</h1>
         <br></br>
         <div>
           <form onSubmit={this.handleSubmit}>

@@ -6,15 +6,76 @@ on:
       - master
 
 jobs:
-  deploy:
-    name: Deploy 🛰
+  check:
+    name: Check for change 👛
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code 💻
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 2
+
+      - name: Check modified files 🗄
+        id: check_files
+        run: |
+          echo "=============== Setting Deploy Flags False ==============="
+          echo "::set-output name=deploy_be::false"
+          echo "::set-output name=deploy_fe::false"
+          echo "=============== List Modified Files ==============="
+          git diff --name-only HEAD^ HEAD
+          
+          echo "========== Check Paths of Modified Files =========="
+          git diff --name-only HEAD^ HEAD > files.txt
+          while IFS= read -r file
+          do
+            echo $file
+            if [[ $file == backend/* ]]; then
+              echo "This modified file is in the 'backend' folder."
+              echo "::set-output name=deploy_be::true"
+              break
+            elif [[ $file == frontend/* ]]; then
+              echo "This modified file is in the 'frontend' folder."
+              echo "::set-output name=deploy_fe::true"
+              break
+            else
+              echo "File not in deplyable both - Skipping"
+            fi
+          done < files.txt
+
+  deploy-be:
+    name: Deploy Backend 👨🏻‍🦲
+    needs: check
+    if: needs.check.outputs.deploy_be == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deep Checkout 🎣
       - uses: actions/checkout@master
+          with:
+            fetch-depth: 0
+
       - id: deploy
-        name: Deploy to dokku
+        name: Deploy to Dokku 🐳
         uses: idoberko2/dokku-deploy-github-action@v1
         with:
             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
             dokku-host: '157.230.7.241'
             app-name: 'nanuda-be'
+
+  deploy-fe:
+  name: Deploy Frontend 💁🏽‍♀️
+  needs: check
+  if: needs.check.outputs.deploy_fe == 'true'
+  runs-on: ubuntu-latest
+  steps:
+    - name: Deep Checkout 🎣
+    - uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+
+    - id: deploy
+      name: Deploy to Dokku 🐳
+      uses: idoberko2/dokku-deploy-github-action@v1
+      with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          dokku-host: '157.230.7.241'
+          app-name: 'nanuda-fe'

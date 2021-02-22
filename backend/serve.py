@@ -51,9 +51,10 @@ async def classify_text(text: Classify):
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
     # Limit results where confidence less than THRESH
     truncated_results = [elem for elem in sorted_results if elem["confidence"] > THRESH]
-    # Calculate and append unaccounted condifences
-    truncated_confidence =  1 - sum([elem["confidence"] for elem in truncated_results])
-    truncated_results.append({"emoji": "Other", "confidence": truncated_confidence})
+    if len(truncated_results) > 0:
+        # Calculate and append unaccounted condifences
+        truncated_confidence =  1 - sum([elem["confidence"] for elem in truncated_results])
+        truncated_results.append({"emoji": "Other", "confidence": truncated_confidence})
     return truncated_results
 
 

@@ -44,10 +44,17 @@ async def root():
 
 @app.post("/classify_text")
 async def classify_text(text: Classify):
+    THRESH = 0.02
     # Get List of predictions from fastai
     results = model.classify_emoji(text.body)
+    # Sort results by condifence
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
-    return sorted_results[:5]
+    # Limit results where confidence less than THRESH
+    truncated_results = [elem for elem in sorted_results if elem["confidence"] > THRESH]
+    # Calculate and append unaccounted condifences
+    truncated_confidence =  1 - sum([elem["confidence"] for elem in truncated_results])
+    truncated_results.append({"emoji": "Other", "confidence": truncated_confidence})
+    return truncated_results
 
 
 @app.post("/emojify")

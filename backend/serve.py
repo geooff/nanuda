@@ -4,10 +4,13 @@ from sqlalchemy.orm import Session
 
 import emoji_classifier
 
-from utils import database, models, schemas, crud
+from utils import models, crud
+
+from utils.schema import ClassifyBase, ClassifyCreate, Emojify
+from utils.database import engine, SessionLocal
 
 # Create all model metadata in DB
-models.Base.metadata.create_all(bind=database.engine)
+models.Base.metadata.create_all(bind=engine)
 
 # Bind webserver early to avoid timeout issue
 app = FastAPI()
@@ -17,25 +20,27 @@ model = emoji_classifier.EmojiClassifier()
 
 # Generate DB dependency
 def get_db():
-    db = database.SessionLocal()
+    db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
+
 # Do CORS stuff
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-    "http://localhost:3000",
-    "localhost:3000",
-    "app.nanuda.ca",
-    "http://app.nanuda.ca"
-],
+        "http://localhost:3000",
+        "localhost:3000",
+        "app.nanuda.ca",
+        "http://app.nanuda.ca",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
+
 
 @app.get("/")
 async def root():
@@ -43,28 +48,41 @@ async def root():
 
 
 @app.post("/classify_text")
-async def classify_text(text: schemas.ClassifyBase, request: Request, db: Session = Depends(get_db)):
+async def classify_text(
+    text: ClassifyBase, request: Request, db: Session = Depends(get_db)
+):
     THRESH = 0.02
-    
+
     # Get List of predictions from fastai
     results = model.classify_emoji(text.tweet)
-    
+
     # Sort results by condifence and limit by THRESH
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
     truncated_results = [elem for elem in sorted_results if elem["confidence"] > THRESH]
 
     # If results calculate and append unaccounted condifences
     if len(truncated_results) > 0:
-        truncated_confidence =  1 - sum([elem["confidence"] for elem in truncated_results])
+        truncated_confidence = 1 - sum(
+            [elem["confidence"] for elem in truncated_results]
+        )
         truncated_results.append({"emoji": "Other", "confidence": truncated_confidence})
-    
+
     # Log prediction to Database
-    crud.create_prediction(db, schemas.ClassifyCreate(user=request.client.host, model=model.model_origin, raw_result=results, result=truncated_results, **text.dict()))
+    crud.create_prediction(
+        db,
+        ClassifyCreate(
+            user=request.client.host,
+            model=model.model_origin,
+            raw_result=results,
+            result=truncated_results,
+            **text.dict(),
+        ),
+    )
     return truncated_results
 
 
 @app.post("/emojify")
-async def emojify_text(text: schemas.Emojify):
+async def emojify_text(text: Emojify):
     # Get List of predictions from fastai
     results = model.classify_emoji(text.tweet)
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)

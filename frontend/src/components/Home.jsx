@@ -9,8 +9,19 @@ import {
   TableBody,
   Table,
   Button,
+  TextField,
 } from "@material-ui/core";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Slide from "@material-ui/core/Slide";
 import Grid from "@material-ui/core/Grid";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 /** Landing page to display emojis related to user inputted text */
 class Home extends Component {
@@ -24,6 +35,7 @@ class Home extends Component {
       results: [],
       chars_left: this.max_chars,
       backgroundColours: [],
+      setOpen: false,
     };
   }
   componentDidMount() {
@@ -39,6 +51,13 @@ class Home extends Component {
     baseURL: "http://api.nanuda.ca",
   });
 
+  handleClickOpen = () => {
+    this.setState({ setOpen: true });
+  };
+
+  handleClose = () => {
+    this.setState({ setOpen: false });
+  };
   // Called on text area change, dynamically update state of chars remaining in UI
   handleChange = (event) => {
     var input = event.target.value;
@@ -52,7 +71,7 @@ class Home extends Component {
   handleSubmit = (event) => {
     event.preventDefault();
     if (!this.state.body) {
-      alert("Need text");
+      alert("Need a message");
       return;
     }
 
@@ -61,7 +80,9 @@ class Home extends Component {
         body: this.state.body,
       })
       .then((response) => {
-        this.setState({ results: response.data });
+        response.length
+          ? this.setState({ results: response.data })
+          : alert("Yeehaw, we didnt catch that. Please try again");
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -89,6 +110,41 @@ class Home extends Component {
     return this.generateShades(hexValue);
   };
 
+  /**
+   * TODO: Connect replace alerts with dialog
+   */
+  renderDialog() {
+    const { setOpen } = this.state;
+    return (
+      <>
+        <Dialog
+          open={setOpen}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={this.handleClose}
+          aria-labelledby="alert-dialog-slide-title"
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle id="alert-dialog-slide-title">
+            {"Yeehaw, we did not catch that"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              Pls try again with a better msg, ty.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              Nah
+            </Button>
+            <Button onClick={this.handleClose} color="primary">
+              I Suppose
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </>
+    );
+  }
   render() {
     require("./styles.css");
     const { results, backgroundColours } = this.state;
@@ -105,8 +161,13 @@ class Home extends Component {
         <form onSubmit={this.handleSubmit}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <textarea
+              <TextField
+                id="filled-multiline-static"
+                label="What are you thinking..."
+                multiline
+                rows={4}
                 className="textArea"
+                variant="filled"
                 onChange={this.handleChange.bind(this)}
               />
             </Grid>

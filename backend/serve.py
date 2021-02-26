@@ -1,40 +1,45 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import os
+from sqlalchemy.orm import Session
 
-from emoji_classifier import EmojiClassifier
+import emoji_classifier
+
+from utils import models, crud
+
+from utils.schema import ClassifyBase, ClassifyCreate, Emojify
+from utils.database import engine, SessionLocal
+
+# Create all model metadata in DB
+models.Base.metadata.create_all(bind=engine)
 
 # Bind webserver early to avoid timeout issue
 app = FastAPI()
 
 # Init our classifier
-model = EmojiClassifier()
+model = emoji_classifier.EmojiClassifier()
 
-origins = [
-    "http://localhost:3000",
-    "localhost:3000",
-    "app.nanuda.ca",
-    "http://app.nanuda.ca"
-]
+# Generate DB dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
+# Do CORS stuff
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "http://localhost:3000",
+        "localhost:3000",
+        "app.nanuda.ca",
+        "http://app.nanuda.ca",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
-
-# DataClass for classifying text without control of return
-class Classify(BaseModel):
-    body: str
-
-# DataClass for classifying text WITH control of return
-class Text(BaseModel):
-    body: str
-    emoji_returned: int
 
 
 @app.get("/")
@@ -43,36 +48,48 @@ async def root():
 
 
 @app.post("/classify_text")
-async def classify_text(text: Classify):
+async def classify_text(
+    text: ClassifyBase, request: Request, db: Session = Depends(get_db)
+):
     THRESH = 0.02
+
     # Get List of predictions from fastai
-    results = model.classify_emoji(text.body)
-    # Sort results by condifence
+    results = model.classify_emoji(text.tweet)
+
+    # Sort results by condifence and limit by THRESH
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
-    # Limit results where confidence less than THRESH
     truncated_results = [elem for elem in sorted_results if elem["confidence"] > THRESH]
+
+    # If results calculate and append unaccounted condifences
     if len(truncated_results) > 0:
-        # Calculate and append unaccounted condifences
-        truncated_confidence =  1 - sum([elem["confidence"] for elem in truncated_results])
+        truncated_confidence = 1 - sum(
+            [elem["confidence"] for elem in truncated_results]
+        )
         truncated_results.append({"emoji": "Other", "confidence": truncated_confidence})
+
+    # Log prediction to Database
+    crud.create_prediction(
+        db,
+        ClassifyCreate(
+            user=request.client.host,
+            model=model.model_origin,
+            raw_result=results,
+            result=truncated_results,
+            **text.dict(),
+        ),
+    )
     return truncated_results
 
 
 @app.post("/emojify")
-async def emojify_text(text: Text):
+async def emojify_text(text: Emojify):
     # Get List of predictions from fastai
-    results = model.classify_emoji(text.body)
+    results = model.classify_emoji(text.tweet)
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
     emoji = "".join([x["emoji"] for x in sorted_results[: int(text.emoji_returned)]])
-    return " ".join([text.body, emoji])
+    return " ".join([text.tweet, emoji])
 
 
 @app.get("/healthcheck", status_code=200)
 async def healthcheck():
-    if hasattr(model, 'MODEL_S3_PATH'):
-        # Model is served via S3 Path
-        model_path = model.MODEL_S3_PATH 
-    else:
-        # Model comes from local
-        model_path = model.MODEL_PATH
-    return f"Emoji classifier from path {model_path} is ready to go!"
+    return f"Emoji classifier from path {model.model_origin} is ready to go!"

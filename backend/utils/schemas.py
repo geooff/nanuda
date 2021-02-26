@@ -14,10 +14,12 @@ class Emojify(BaseModel):
 class ClassifyBase(BaseModel):
     tweet: str
 
+
 # Recursive model for single predictions of a larger output
 class SinglePrediction(BaseModel):
     emoji: str
     confidence: float
+
 
 # Model for classified text not commited to DB
 class ClassifyCreate(ClassifyBase):
@@ -25,6 +27,7 @@ class ClassifyCreate(ClassifyBase):
     model: str
     raw_result: List[SinglePrediction]
     result: List[SinglePrediction]
+
 
 class Classify(ClassifyCreate):
     id: UUID = Field(default_factory=uuid4)

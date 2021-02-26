@@ -1,0 +1,17 @@
+.parentContainer {
+  display: "flex";
+  justify-content: "center";
+  align-items: "center";
+  height: "100vh";
+  background-color: "linear-gradient(-45deg, #a1adc9, #637fc2, #1e46a6, #6e7085)";
+}
+.textArea {
+  height: 120px;
+  width: 100%;
+  background-color: lightgrey;
+}
+
+.charsRemaining {
+  font-weight: bold;
+  font-size: large;
+}

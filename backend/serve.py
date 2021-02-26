@@ -2,8 +2,8 @@ from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from utils import models, crud, database, schema
-import emoji_classifier
+from utils import models, crud, database, schemas
+from emoji_classifier import EmojiClassifier
 
 
 # Create all model metadata in DB
@@ -13,7 +13,7 @@ models.Base.metadata.create_all(bind=database.engine)
 app = FastAPI()
 
 # Init our classifier
-model = emoji_classifier.EmojiClassifier()
+model = EmojiClassifier()
 
 # Generate DB dependency
 def get_db():
@@ -46,7 +46,7 @@ async def root():
 
 @app.post("/classify_text")
 async def classify_text(
-    text: schema.ClassifyBase, request: Request, db: Session = Depends(get_db)
+    text: schemas.ClassifyBase, request: Request, db: Session = Depends(get_db)
 ):
     THRESH = 0.02
 
@@ -67,7 +67,7 @@ async def classify_text(
     # Log prediction to Database
     crud.create_prediction(
         db,
-        schema.ClassifyCreate(
+        schemas.ClassifyCreate(
             user=request.client.host,
             model=model.model_origin,
             raw_result=results,
@@ -79,7 +79,7 @@ async def classify_text(
 
 
 @app.post("/emojify")
-async def emojify_text(text: schema.Emojify):
+async def emojify_text(text: schemas.Emojify):
     # Get List of predictions from fastai
     results = model.classify_emoji(text.tweet)
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)

@@ -27,19 +27,19 @@ client = session.client('s3',
 class EmojiClassifier:
     def __init__(self):
         self.MODEL_PATH = "model.pkl"
-        if not Path(self.MODEL_PATH).is_file():
-            self.MODEL_S3_PATH = os.environ.get("MODEL_S3_PATH")
-            if self.MODEL_S3_PATH:
-                print(f"Fetching model from: {self.MODEL_S3_PATH}")
-                client.download_file(os.getenv('SPACE_NAME'),
-                     self.MODEL_S3_PATH,
-                     self.MODEL_PATH)
-            else:
-                raise KeyError("Error - MODEL_S3_PATH not set. Check Heroku config")
+        self.model_origin = self.MODEL_PATH 
+        if (MODEL_S3_PATH := os.environ.get("MODEL_S3_PATH")):
+            self.MODEL_S3_PATH = MODEL_S3_PATH
+            self.model_origin = self.MODEL_S3_PATH 
+            print(f"Fetching model from: {self.MODEL_S3_PATH}")
+            client.download_file(os.getenv('SPACE_NAME'),
+                    self.MODEL_S3_PATH,
+                    self.MODEL_PATH)
 
         print(f"Loading model: {self.MODEL_PATH}")
         self.learn = load_learner(self.MODEL_PATH)
         self.labels = self.learn.dls.vocab[1]
+
 
     def classify_emoji(self, text: str):
         """Classify tweet like string to emoji representation using model

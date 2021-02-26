@@ -80,7 +80,7 @@ class Home extends Component {
         body: this.state.body,
       })
       .then((response) => {
-        response.length
+        response.data.length
           ? this.setState({ results: response.data })
           : alert("Yeehaw, we didnt catch that. Please try again");
       })

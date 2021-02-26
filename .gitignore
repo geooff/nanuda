@@ -10,6 +10,9 @@ __pycache__
 # Ignore models
 *.pkl
 
+# Ignore local DBs
+*.db
+
 # Ignore creds
 twitter_keys.json
 S3_keys.json

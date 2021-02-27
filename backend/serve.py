@@ -1,28 +1,15 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
 
 from utils import models, crud, database, schemas
 from emoji_classifier import EmojiClassifier
 
-
-# Create all model metadata in DB
-models.Base.metadata.create_all(bind=database.engine)
 
 # Bind webserver early to avoid timeout issue
 app = FastAPI()
 
 # Init our classifier
 model = EmojiClassifier()
-
-# Generate DB dependency
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 # Do CORS stuff
 app.add_middleware(
@@ -39,15 +26,23 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+async def startup():
+    await database.db.connect()
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.db.disconnect()
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
 
 @app.post("/classify_text")
-async def classify_text(
-    text: schemas.ClassifyBase, request: Request, db: Session = Depends(get_db)
-):
+async def classify_text(text: schemas.ClassifyBase, request: Request):
     THRESH = 0.02
 
     # Get List of predictions from fastai
@@ -65,8 +60,9 @@ async def classify_text(
         truncated_results.append({"emoji": "Other", "confidence": truncated_confidence})
 
     # Log prediction to Database
-    crud.create_prediction(
-        db,
+    await crud.create_prediction(
+        database.db,
+        models.prediction_table,
         schemas.ClassifyCreate(
             user=request.client.host,
             model=model.model_origin,

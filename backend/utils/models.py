@@ -1,10 +1,8 @@
-from sqlalchemy import Column, Integer, String, DateTime, JSON
+from sqlalchemy import MetaData, Table, Column, String, DateTime, JSON
 from sqlalchemy.types import TypeDecorator, CHAR
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 import uuid
-
-from utils.database import Base
 
 
 class GUID(TypeDecorator):
@@ -42,13 +40,16 @@ class GUID(TypeDecorator):
             return value
 
 
-class Prediction(Base):
-    __tablename__ = "prediction"
+metadata = MetaData()
 
-    id = Column(GUID(), primary_key=True, default=uuid.uuid4)
-    created_at = Column(DateTime, server_default=func.now(), index=True)
-    user = Column(String, index=True)
-    model = Column(String, index=True)
-    tweet = Column(String(160), index=True)
-    raw_result = Column(JSON)
-    result = Column(JSON)
+prediction_table = Table(
+    "prediction",
+    metadata,
+    Column("id", GUID(), primary_key=True, default=uuid.uuid4),
+    Column("created_at", DateTime, server_default=func.now(), index=True),
+    Column("user", String, index=True),
+    Column("model", String, index=True),
+    Column("tweet", String(160), index=True),
+    Column("raw_result", JSON),
+    Column("result", JSON),
+)

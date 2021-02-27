@@ -31,7 +31,7 @@ class Home extends Component {
     super(props);
 
     this.state = {
-      body: "",
+      tweet: "",
       results: [],
       chars_left: this.max_chars,
       backgroundColours: [],
@@ -62,7 +62,7 @@ class Home extends Component {
   handleChange = (event) => {
     var input = event.target.value;
     this.setState({
-      body: event.target.value,
+      tweet: event.target.value,
       chars_left: this.max_chars - input.length,
     });
   };
@@ -70,14 +70,14 @@ class Home extends Component {
   // Pass input to BE and set state with results
   handleSubmit = (event) => {
     event.preventDefault();
-    if (!this.state.body) {
+    if (!this.state.tweet) {
       alert("Need a message");
       return;
     }
 
     this.instance
       .post("/classify_text", {
-        body: this.state.body,
+        tweet: this.state.tweet,
       })
       .then((response) => {
         response.data.length

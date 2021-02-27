@@ -25,7 +25,6 @@ class SinglePrediction(BaseModel):
 class ClassifyCreate(ClassifyBase):
     user: str
     model: str
-    raw_result: List[SinglePrediction]
     result: List[SinglePrediction]
 
 

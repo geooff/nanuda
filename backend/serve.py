@@ -66,7 +66,6 @@ async def classify_text(text: schemas.ClassifyBase, request: Request):
         schemas.ClassifyCreate(
             user=request.client.host,
             model=model.model_origin,
-            raw_result=results,
             result=truncated_results,
             **text.dict(),
         ),

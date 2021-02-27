@@ -50,6 +50,5 @@ prediction_table = Table(
     Column("user", String, index=True),
     Column("model", String, index=True),
     Column("tweet", String(160), index=True),
-    Column("raw_result", JSON),
     Column("result", JSON),
 )

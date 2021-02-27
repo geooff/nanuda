@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, MetaData
 
 metadata = MetaData()
 
-db_args = {"ssl": True, "min_size": 5, "max_size": 20}
+db_args = {"min_size": 5, "max_size": 20}
 
 if os.getenv("DB_CONN_STR"):
     DATABASE_URL = os.getenv("DB_CONN_STR")

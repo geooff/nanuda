@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
-from utils import models, crud, database, schemas
+from utils import crud, database, schemas
 from emoji_classifier import EmojiClassifier
 
 
@@ -62,7 +62,7 @@ async def classify_text(text: schemas.ClassifyBase, request: Request):
     # Log prediction to Database
     await crud.create_prediction(
         database.db,
-        models.prediction_table,
+        database.prediction_table,
         schemas.ClassifyCreate(
             user=request.client.host,
             model=model.model_origin,

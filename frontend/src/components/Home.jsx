@@ -1,16 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {
-  TableContainer,
-  Paper,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Table,
-  Button,
-  TextField,
-} from "@material-ui/core";
+import { Button, TextField } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -18,6 +8,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import Grid from "@material-ui/core/Grid";
+import { Doughnut } from "react-chartjs-2";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -97,7 +88,7 @@ class Home extends Component {
 
     while (p < color.length) {
       temp = parseInt(color.slice(p, (p += 2)), 16);
-      temp += Math.floor((255 - temp) * random);
+      temp += Math.floor((180 - temp) * random);
       result += temp.toString(16).padStart(2, "0");
     }
     return result;
@@ -145,6 +136,52 @@ class Home extends Component {
       </>
     );
   }
+
+  getDonutColours(results) {
+    const colours = [];
+    for (var i = 0; i < results; i++) {
+      colours.push(this.generateRandomHexColour());
+    }
+    return colours;
+  }
+
+  renderChart(results) {
+    var emojiArr = results.map(function (el) {
+      return el.emoji;
+    });
+    var confArr = results.map(function (el) {
+      return (el.confidence * 100).toFixed(2);
+    });
+
+    return (
+      <div>
+        <Doughnut
+          data={{
+            labels: emojiArr,
+            datasets: [
+              {
+                data: confArr,
+                backgroundColor: this.getDonutColours(results.length),
+                borderWidth: 1,
+              },
+            ],
+            labels: emojiArr,
+          }}
+          height={200}
+          width={200}
+          options={{
+            maintainAspectRatio: false,
+            legend: {
+              labels: {
+                fontSize: 25,
+              },
+            },
+          }}
+        />
+      </div>
+    );
+  }
+
   render() {
     require("./styles.css");
     const { results, backgroundColours } = this.state;
@@ -177,8 +214,8 @@ class Home extends Component {
                 className="charsRemaining"
                 style={
                   this.state.chars_left >= 15
-                    ? { color: "black", marginTop: -20 }
-                    : { color: "red", marginTop: -20 }
+                    ? { color: "black", marginTop: -10 }
+                    : { color: "red", marginTop: -10 }
                 }
               >
                 Characters Left: {this.state.chars_left}
@@ -193,36 +230,8 @@ class Home extends Component {
                 Classify
               </Button>
             </Grid>
-
-            <Grid item xs={12}>
-              <div>
-                {results.length > 0 && (
-                  <TableContainer component={Paper}>
-                    <Table aria-label="simple-table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Emoji</TableCell>
-                          <TableCell align="right">Confidence</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      {results.map((result) => (
-                        <TableBody>
-                          <TableRow key={result.emoji}>
-                            <TableCell component="th" scope="row">
-                              {result.emoji}
-                            </TableCell>
-                            <TableCell align="right">
-                              {(result.confidence * 100).toFixed(2)}
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      ))}
-                    </Table>
-                  </TableContainer>
-                )}
-              </div>
-            </Grid>
           </Grid>
+          {results.length > 0 && this.renderChart(results)}
         </form>
       </div>
     );

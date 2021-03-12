@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Button, TextField } from "@material-ui/core";
+import {
+  Button,
+  TextField,
+  BottomNavigationAction,
+  BottomNavigation,
+} from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -9,6 +14,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import Grid from "@material-ui/core/Grid";
 import { Doughnut } from "react-chartjs-2";
+import "chartjs-plugin-labels";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -52,6 +58,13 @@ class Home extends Component {
   // Called on text area change, dynamically update state of chars remaining in UI
   handleChange = (event) => {
     var input = event.target.value;
+    // Clear UI for each net new search
+    if (!input.length) {
+      this.setState({
+        results: [],
+      });
+    }
+
     this.setState({
       tweet: event.target.value,
       chars_left: this.max_chars - input.length,
@@ -165,15 +178,15 @@ class Home extends Component {
                 borderWidth: 1,
               },
             ],
-            labels: emojiArr,
           }}
-          height={200}
-          width={200}
+          height={400}
+          width={600}
           options={{
             maintainAspectRatio: false,
             legend: {
               labels: {
                 fontSize: 25,
+                fontColor: "black",
               },
             },
           }}
@@ -194,48 +207,57 @@ class Home extends Component {
         ${backgroundColours[2]}, ${backgroundColours[3]}, ${backgroundColours[4]})`,
     };
     return (
-      <div style={divStyle}>
-        <form onSubmit={this.handleSubmit}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <TextField
-                id="filled-multiline-static"
-                label="What are you thinking..."
-                multiline
-                rows={4}
-                className="textArea"
-                variant="filled"
-                onChange={this.handleChange.bind(this)}
-              />
-            </Grid>
+      <div>
+        <div style={divStyle}>
+          <form onSubmit={this.handleSubmit}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <TextField
+                  id="filled-multiline-static"
+                  label="What are you thinking..."
+                  multiline
+                  rows={4}
+                  className="textArea"
+                  variant="filled"
+                  onChange={this.handleChange.bind(this)}
+                />
+              </Grid>
 
-            <Grid item xs={10}>
-              <p
-                className="charsRemaining"
-                style={
-                  this.state.chars_left >= 15
-                    ? { color: "black", marginTop: -10 }
-                    : { color: "red", marginTop: -10 }
-                }
-              >
-                Characters Left: {this.state.chars_left}
-              </p>
+              <Grid item xs={10}>
+                <p
+                  className="charsRemaining"
+                  style={
+                    this.state.chars_left >= 15
+                      ? { color: "black", marginTop: -10 }
+                      : { color: "red", marginTop: -10 }
+                  }
+                >
+                  Characters Left: {this.state.chars_left}
+                </p>
+              </Grid>
+              <Grid item xs={2}>
+                <Button
+                  type="submit"
+                  variant="outlined"
+                  style={{ backgroundColor: "white" }}
+                >
+                  Nanuda!
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={2}>
-              <Button
-                type="submit"
-                variant="outlined"
-                style={{ backgroundColor: "white" }}
-              >
-                Classify
-              </Button>
-            </Grid>
-          </Grid>
-          {results.length > 0 && this.renderChart(results)}
-        </form>
+            {results.length > 0 && this.renderChart(results)}
+          </form>
+        </div>
+        <BottomNavigation>
+          <BottomNavigationAction label="Recents" />
+          <BottomNavigationAction label="Favorites" />
+          <BottomNavigationAction label="Nearby" />
+        </BottomNavigation>
       </div>
     );
   }
 }
 
 export default Home;
+
+// Add in TLDR in text and explain what is happening

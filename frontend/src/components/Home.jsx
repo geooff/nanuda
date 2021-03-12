@@ -15,7 +15,7 @@ import Slide from "@material-ui/core/Slide";
 import Grid from "@material-ui/core/Grid";
 import { Doughnut } from "react-chartjs-2";
 import Typography from "@material-ui/core/Typography";
-
+import Footer from "./Footer";
 import "chartjs-plugin-labels";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -203,18 +203,19 @@ class Home extends Component {
     require("./styles.css");
     const { results, backgroundColours, isShowingChart } = this.state;
     const divStyle = {
+      paddingLeft: "10%",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      height: "100vh",
+      height: "97vh",
       background: `linear-gradient(-45deg,${backgroundColours[0]},${backgroundColours[1]},
         ${backgroundColours[2]}, ${backgroundColours[3]}, ${backgroundColours[4]})`,
     };
     return (
-      <div style={divStyle}>
-        <div>
+      <div>
+        <div style={divStyle}>
           <form>
-            <Grid container spacing={4}>
+            <Grid container spacing={5}>
               <Grid item xs={4}>
                 <Typography variant="h1" align="left">
                   NANUDA
@@ -266,6 +267,7 @@ class Home extends Component {
             {isShowingChart && this.renderChart(results)}
           </form>
         </div>
+        <Footer />
       </div>
     );
   }

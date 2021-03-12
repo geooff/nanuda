@@ -14,6 +14,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import Grid from "@material-ui/core/Grid";
 import { Doughnut } from "react-chartjs-2";
+import Typography from "@material-ui/core/Typography";
+
 import "chartjs-plugin-labels";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -209,11 +211,24 @@ class Home extends Component {
         ${backgroundColours[2]}, ${backgroundColours[3]}, ${backgroundColours[4]})`,
     };
     return (
-      <div>
-        <div style={divStyle}>
+      <div style={divStyle}>
+        <div>
           <form>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
+            <Grid container spacing={4}>
+              <Grid item xs={4}>
+                <Typography variant="h1" align="left">
+                  NANUDA
+                </Typography>
+                <Typography
+                  style={{ width: 350 }}
+                  variant="subtitle"
+                  align="left"
+                >
+                  Type in a message and get back emojis!
+                </Typography>
+              </Grid>
+
+              <Grid item xs={10}>
                 <TextField
                   id="filled-multiline-static"
                   label="What are you thinking..."
@@ -225,7 +240,7 @@ class Home extends Component {
                 />
               </Grid>
 
-              <Grid item xs={10}>
+              <Grid item xs={8}>
                 <p
                   className="charsRemaining"
                   style={
@@ -241,7 +256,7 @@ class Home extends Component {
                 <Button
                   type="submit"
                   variant="outlined"
-                  style={{ backgroundColor: "white" }}
+                  style={{ backgroundColor: "white", marginBottom: 10 }}
                   onClick={(e) => this.handleSubmit(e)}
                 >
                   Nanuda!
@@ -251,16 +266,9 @@ class Home extends Component {
             {isShowingChart && this.renderChart(results)}
           </form>
         </div>
-        <BottomNavigation>
-          <BottomNavigationAction label="Recents" />
-          <BottomNavigationAction label="Favorites" />
-          <BottomNavigationAction label="Nearby" />
-        </BottomNavigation>
       </div>
     );
   }
 }
 
 export default Home;
-
-// Add in TLDR in text and explain what is happening

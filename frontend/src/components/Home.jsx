@@ -33,6 +33,7 @@ class Home extends Component {
       chars_left: this.max_chars,
       backgroundColours: [],
       setOpen: false,
+      isShowingChart: false,
     };
   }
   componentDidMount() {
@@ -68,12 +69,14 @@ class Home extends Component {
     this.setState({
       tweet: event.target.value,
       chars_left: this.max_chars - input.length,
+      isShowingChart: false,
     });
   };
 
   // Pass input to BE and set state with results
   handleSubmit = (event) => {
     event.preventDefault();
+
     if (!this.state.tweet) {
       alert("Need a message");
       return;
@@ -85,7 +88,7 @@ class Home extends Component {
       })
       .then((response) => {
         response.data.length
-          ? this.setState({ results: response.data })
+          ? this.setState({ results: response.data, isShowingChart: true })
           : alert("Yeehaw, we didnt catch that. Please try again");
       })
       .catch((error) => {
@@ -110,7 +113,6 @@ class Home extends Component {
   generateRandomHexColour = () => {
     const randomColour = Math.floor(Math.random() * 16777215).toString(16);
     const hexValue = "#" + randomColour;
-
     return this.generateShades(hexValue);
   };
 
@@ -197,7 +199,7 @@ class Home extends Component {
 
   render() {
     require("./styles.css");
-    const { results, backgroundColours } = this.state;
+    const { results, backgroundColours, isShowingChart } = this.state;
     const divStyle = {
       display: "flex",
       justifyContent: "center",
@@ -209,7 +211,7 @@ class Home extends Component {
     return (
       <div>
         <div style={divStyle}>
-          <form onSubmit={this.handleSubmit}>
+          <form>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <TextField
@@ -219,7 +221,7 @@ class Home extends Component {
                   rows={4}
                   className="textArea"
                   variant="filled"
-                  onChange={this.handleChange.bind(this)}
+                  onChange={this.handleChange}
                 />
               </Grid>
 
@@ -240,12 +242,13 @@ class Home extends Component {
                   type="submit"
                   variant="outlined"
                   style={{ backgroundColor: "white" }}
+                  onClick={(e) => this.handleSubmit(e)}
                 >
                   Nanuda!
                 </Button>
               </Grid>
             </Grid>
-            {results.length > 0 && this.renderChart(results)}
+            {isShowingChart && this.renderChart(results)}
           </form>
         </div>
         <BottomNavigation>

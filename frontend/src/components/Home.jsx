@@ -203,7 +203,7 @@ class Home extends Component {
     require("./styles.css");
     const { results, backgroundColours, isShowingChart } = this.state;
     const divStyle = {
-      paddingLeft: "10%",
+      paddingLeft: "5%",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -216,7 +216,7 @@ class Home extends Component {
         <div style={divStyle}>
           <form>
             <Grid container spacing={5}>
-              <Grid item xs={4}>
+              <Grid item xs={8}>
                 <Typography variant="h1" align="left">
                   NANUDA
                 </Typography>
@@ -239,30 +239,31 @@ class Home extends Component {
                   variant="filled"
                   onChange={this.handleChange}
                 />
-              </Grid>
-
-              <Grid item xs={8}>
-                <p
+                <div
                   className="charsRemaining"
                   style={
                     this.state.chars_left >= 15
-                      ? { color: "black", marginTop: -10 }
-                      : { color: "red", marginTop: -10 }
+                      ? { color: "black" }
+                      : { color: "red" }
                   }
                 >
                   Characters Left: {this.state.chars_left}
-                </p>
-              </Grid>
-              <Grid item xs={2}>
+                </div>
+
                 <Button
                   type="submit"
                   variant="outlined"
-                  style={{ backgroundColor: "white", marginBottom: 10 }}
+                  style={{
+                    backgroundColor: "white",
+                    marginBottom: 10,
+                    float: "right",
+                  }}
                   onClick={(e) => this.handleSubmit(e)}
                 >
                   Nanuda!
                 </Button>
               </Grid>
+              <Grid item xs={10}></Grid>
             </Grid>
             {isShowingChart && this.renderChart(results)}
           </form>

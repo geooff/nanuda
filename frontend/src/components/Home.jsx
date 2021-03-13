@@ -1,26 +1,13 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {
-  Button,
-  TextField,
-  BottomNavigationAction,
-  BottomNavigation,
-} from "@material-ui/core";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Slide from "@material-ui/core/Slide";
+import { Button, TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { Doughnut } from "react-chartjs-2";
 import Typography from "@material-ui/core/Typography";
 import Footer from "./Footer";
 import "chartjs-plugin-labels";
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+import Alert from "@material-ui/lab/Alert";
+import AlertTitle from "@material-ui/lab/AlertTitle";
 
 /** Landing page to display emojis related to user inputted text */
 class Home extends Component {
@@ -34,8 +21,8 @@ class Home extends Component {
       results: [],
       chars_left: this.max_chars,
       backgroundColours: [],
-      setOpen: false,
       isShowingChart: false,
+      noResults: false,
     };
   }
   componentDidMount() {
@@ -51,13 +38,6 @@ class Home extends Component {
     baseURL: "http://api.nanuda.ca",
   });
 
-  handleClickOpen = () => {
-    this.setState({ setOpen: true });
-  };
-
-  handleClose = () => {
-    this.setState({ setOpen: false });
-  };
   // Called on text area change, dynamically update state of chars remaining in UI
   handleChange = (event) => {
     var input = event.target.value;
@@ -80,7 +60,7 @@ class Home extends Component {
     event.preventDefault();
 
     if (!this.state.tweet) {
-      alert("Need a message");
+      alert("Please type in a message to be classified!");
       return;
     }
 
@@ -90,8 +70,12 @@ class Home extends Component {
       })
       .then((response) => {
         response.data.length
-          ? this.setState({ results: response.data, isShowingChart: true })
-          : alert("Yeehaw, we didnt catch that. Please try again");
+          ? this.setState({
+              results: response.data,
+              isShowingChart: true,
+              noResults: false,
+            })
+          : this.setState({ noResults: true });
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -118,42 +102,6 @@ class Home extends Component {
     return this.generateShades(hexValue);
   };
 
-  /**
-   * TODO: Connect replace alerts with dialog
-   */
-  renderDialog() {
-    const { setOpen } = this.state;
-    return (
-      <>
-        <Dialog
-          open={setOpen}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={this.handleClose}
-          aria-labelledby="alert-dialog-slide-title"
-          aria-describedby="alert-dialog-slide-description"
-        >
-          <DialogTitle id="alert-dialog-slide-title">
-            {"Yeehaw, we did not catch that"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-              Pls try again with a better msg, ty.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Nah
-            </Button>
-            <Button onClick={this.handleClose} color="primary">
-              I Suppose
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </>
-    );
-  }
-
   getDonutColours(results) {
     const colours = [];
     for (var i = 0; i < results; i++) {
@@ -162,6 +110,17 @@ class Home extends Component {
     return colours;
   }
 
+  renderAlert() {
+    return (
+      <div>
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          Yeehaw, we we're unable to classify that. <br></br>
+          <strong>Please try again with more descriptive words.</strong>
+        </Alert>
+      </div>
+    );
+  }
   renderChart(results) {
     var emojiArr = results.map(function (el) {
       return el.emoji;
@@ -201,9 +160,13 @@ class Home extends Component {
 
   render() {
     require("./styles.css");
-    const { results, backgroundColours, isShowingChart } = this.state;
+    const {
+      results,
+      backgroundColours,
+      isShowingChart,
+      noResults,
+    } = this.state;
     const divStyle = {
-      paddingLeft: "5%",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -216,7 +179,7 @@ class Home extends Component {
         <div style={divStyle}>
           <form>
             <Grid container spacing={5}>
-              <Grid item xs={8}>
+              <Grid item xs={10}>
                 <Typography variant="h1" align="left">
                   NANUDA
                 </Typography>
@@ -229,7 +192,7 @@ class Home extends Component {
                 </Typography>
               </Grid>
 
-              <Grid item xs={10}>
+              <Grid item xs={12}>
                 <TextField
                   id="filled-multiline-static"
                   label="What are you thinking..."
@@ -266,6 +229,7 @@ class Home extends Component {
               <Grid item xs={10}></Grid>
             </Grid>
             {isShowingChart && this.renderChart(results)}
+            {noResults && this.renderAlert()}
           </form>
         </div>
         <Footer />

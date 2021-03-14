@@ -185,7 +185,7 @@ class Home extends Component {
                 </Typography>
                 <Typography
                   style={{ width: 350 }}
-                  variant="subtitle"
+                  variant="subtitle1"
                   align="left"
                 >
                   Type in a message and get back emojis!

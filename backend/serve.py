@@ -43,14 +43,16 @@ async def root():
 
 @app.post("/classify_text")
 async def classify_text(text: schemas.ClassifyBase, request: Request):
-    THRESH = 0.02
+    THRESH = 0.005
+    LIMIT = 12
 
     # Get List of predictions from fastai
     results = model.classify_emoji(text.tweet)
 
     # Sort results by condifence and limit by THRESH
     sorted_results = sorted(results, key=lambda x: x["confidence"], reverse=True)
-    truncated_results = [elem for elem in sorted_results if elem["confidence"] > THRESH]
+    limited_results= sorted_results[:LIMIT]
+    truncated_results = [elem for elem in limited_results if elem["confidence"] > THRESH]
 
     # If results calculate and append unaccounted condifences
     if len(truncated_results) > 0:

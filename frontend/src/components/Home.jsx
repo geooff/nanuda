@@ -45,8 +45,13 @@ class Home extends Component {
     if (!input.length) {
       this.setState({
         results: [],
+        noResults: false,
       });
     }
+
+    this.setState({
+      results: [],
+    });
 
     this.setState({
       tweet: event.target.value,
@@ -58,6 +63,10 @@ class Home extends Component {
   // Pass input to BE and set state with results
   handleSubmit = (event) => {
     event.preventDefault();
+
+    this.setState({
+      noResults: false,
+    });
 
     if (!this.state.tweet) {
       alert("Please type in a message to be classified!");
@@ -116,7 +125,10 @@ class Home extends Component {
         <Alert severity="error">
           <AlertTitle>Error</AlertTitle>
           Yeehaw, we we're unable to classify that. <br></br>
-          <strong>Please try again with more descriptive words.</strong>
+          <p>
+            Please try again with more descriptive words.{" "}
+            <strong>Nanuda works great for animals and food.</strong>
+          </p>
         </Alert>
       </div>
     );
@@ -206,8 +218,8 @@ class Home extends Component {
                   className="charsRemaining"
                   style={
                     this.state.chars_left >= 15
-                      ? { color: "black" }
-                      : { color: "red" }
+                      ? { color: "black", paddingTop: 15 }
+                      : { color: "red", paddingTop: 15 }
                   }
                 >
                   Characters Left: {this.state.chars_left}

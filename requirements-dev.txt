@@ -7,7 +7,7 @@ requests==2.25.1
 PyYAML==5.4.1
 ipython==7.19.0
 fastapi==0.63.0
-pydantic==1.7.3
+pydantic==1.7.4
 uvicorn==0.13.3
 emoji==0.6.0
 boto3==1.17.6

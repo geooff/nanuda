@@ -1,6 +1,6 @@
 # Nanuda
 
-Nanuda predicts emoji to match your text using [NLP](https://en.wikipedia.org/wiki/Natural_language_processing). All this fun functionality is served in a webapp built using [FastAPI](https://fastapi.tiangolo.com/) and a __ Front end.
+Nanuda predicts emoji to match your text using [NLP](https://en.wikipedia.org/wiki/Natural_language_processing). All this fun functionality is served in a webapp built using [FastAPI](https://fastapi.tiangolo.com/) and a React Front End.
 
 ## Installation
 

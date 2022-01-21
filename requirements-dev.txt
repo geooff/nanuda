@@ -5,7 +5,7 @@ spacy==2.3.5
 matplotlib==3.3.3
 requests==2.25.1
 PyYAML==5.4.1
-ipython==7.19.0
+ipython==7.31.1
 fastapi==0.63.0
 pydantic==1.7.3
 uvicorn==0.13.3
